@@ -3,7 +3,7 @@ title: Shopspring + HiveMind
 email: hello@dvncan.com
 description: > # this means to ignore newlines until "baseurl:"
   Designs for Shopspring
-baseurl: "" # the subpath of your site, e.g. /blog/
+baseurl: "/argo-static/" # the subpath of your site, e.g. /blog/
 url: "http://hivemind.works/shopspring" # the base hostname & protocol for your site
 twitter_username: duncangraham
 github_username:  duncangraham
