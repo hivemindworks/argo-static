@@ -12,8 +12,8 @@
 
     <link href="http://d2v52k3cl9vedd.cloudfront.net/basscss/6.1.6/basscss.min.css" rel="stylesheet">
 
-    <link rel="canonical" href="http://hivemind.works/shopspring/new.html">
-    <link rel="alternate" type="application/rss+xml" title="Shopspring + HiveMind" href="http://hivemind.works/shopspring/feed.xml" />
+    <link rel="canonical" href="http://hivemind.works/shopspring/argo-static//new.html">
+    <link rel="alternate" type="application/rss+xml" title="Shopspring + HiveMind" href="http://hivemind.works/shopspring/argo-static//feed.xml" />
   </head>
 
 
@@ -24,7 +24,7 @@
       <a href="/" class="button py2 button-transparent">Argo</a>
     </div>
     <div class="sm-col-right">
-      <a href="/new.html" class="button py2 button-transparent">Create a Bus</a>
+      <a href="/argo-static//new.html" class="button py2 button-transparent">Create a Bus</a>
       <a href="/" class="button py2 button-transparent">Your Account</a>
       <a href="/" class="button py2 button-transparent">Logout</a>
     </div>
@@ -33,20 +33,29 @@
 
     <div class="container">
       <div class="clearfix">
-        <form class="sm-col-6">
+        <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { height: 36em; }
+</style>
+
+<form class="sm-col sm-col-6 px4">
   <label>Name</label>
   <input type="text" class="block full-width field-light" placeholder='What event is this bus going to? Be descriptive, but have fun with it'>
   <label>Trip Type</label>
   <div class="clearfix">
     <button type="button" class="left button rounded-left is-active">Round Trip</button>
-    <button type="button" class="left button border-left not-rounded">One Way</button>
-    <button type="button" class="left button border-left rounded-right">Multi Trip</button>
+    <button type="button" class="left button border-left not-rounded" disabled>One Way</button>
+    <button type="button" class="left button border-left rounded-right" disabled>Multi Trip</button>
   </div>
   <label>Start Location</label>
   <input type="text" class="block full-width mb1 field-light">
   <label>Destination Location</label>
   <input type="text" class="block full-width mb1 field-light">
   <label>Departure Time</label>
+  <input type="text" class="block full-width mb1 field-light">
+  <label>Return Time</label>
   <input type="text" class="block full-width mb1 field-light">
   <label>Date</label>
   <select class="block full-width mb1 field-light">
@@ -56,10 +65,64 @@
     <option>Option 4</option>
     <option>Option 5</option>
   </select>
-  <button type="submit" class="button">Sign In</button>
-  <button type="reset" class="button bg-gray">Cancel</button>
+  <button type="submit" class="button">Create Bus</button>
 </form>
 
+<div class="sm-col sm-col-6 px4">
+  <div id='map'></div>
+  <a href='#' id='geolocate' class='ui-button'>Find me</a>
+</div>
+
+<script>
+  L.mapbox.accessToken = 'pk.eyJ1IjoiZHVuY2FuZ3JhaGFtIiwiYSI6IlJJcWdFczQifQ.9HUpTV1es8IjaGAf_s64VQ';
+  var geolocate = document.getElementById('geolocate');
+  var map = L.mapbox.map('map', 'mapbox.streets');
+
+  var myLayer = L.mapbox.featureLayer().addTo(map);
+
+  // This uses the HTML5 geolocation API, which is available on
+  // most mobile browsers and modern browsers, but not in Internet Explorer
+  //
+  // See this chart of compatibility for details:
+  // http://caniuse.com/#feat=geolocation
+  if (!navigator.geolocation) {
+    geolocate.innerHTML = 'Geolocation is not available';
+  } else {
+    geolocate.onclick = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      map.locate();
+    };
+  }
+
+  // Once we've got a position, zoom and center the map
+  // on it, and add a single marker.
+  map.on('locationfound', function(e) {
+    map.fitBounds(e.bounds);
+
+    myLayer.setGeoJSON({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [e.latlng.lng, e.latlng.lat]
+      },
+      properties: {
+        'title': 'Here I am!',
+        'marker-color': '#ff8888',
+        'marker-symbol': 'star'
+      }
+    });
+
+    // And hide the geolocation button
+    geolocate.parentNode.removeChild(geolocate);
+  });
+
+  // If the user chooses not to allow their location
+  // to be shared, display an error message.
+  map.on('locationerror', function() {
+    geolocate.innerHTML = 'Position could not be found';
+  });
+</script>
 
       </div>
     </div>
